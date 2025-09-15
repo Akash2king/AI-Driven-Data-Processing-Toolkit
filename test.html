@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LLM Agent System for Survey Data Cleaning</title>
+  <script src="https://cdn.dhtmlx.com/diagram/edge/dhtmlxDiagram.js"></script>
+  <style>
+    :root {
+      --primary: #007BFF;
+      --secondary: #00C7B1;
+      --dark: #1A1A1A;
+      --light: #F8F9FA;
+      --accent: #FFD700;
+      --success: #28A745;
+      --danger: #DC3545;
+      --gray: #6C757D;
+      --card-bg: #2D3C5F;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--dark);
+      color: var(--light);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: var(--secondary);
+      text-shadow: 0 2px 10px rgba(0, 199, 177, 0.3);
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: var(--gray);
+      max-width: 1000px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .slide {
+      background: linear-gradient(135deg, #1e2a40, #2d3c5f);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .slide:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .slide:hover::before {
+      opacity: 0.2;
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      color: var(--secondary);
+      position: relative;
+      display: inline-block;
+    }
+
+    .slide-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 80px;
+      height: 4px;
+      background-color: var(--accent);
+      border-radius: 4px;
+    }
+
+    .content {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #e0e0e0;
+      line-height: 1.7;
+    }
+
+    .highlight {
+      background-color: rgba(255, 215, 0, 0.1);
+      border-left: 3px solid var(--accent);
+      padding: 18px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      position: relative;
+      font-weight: 500;
+      border: 1px dashed var(--accent);
+    }
+
+    .highlight::before {
+      content: '💡';
+      position: absolute;
+      left: -25px;
+      top: 18px;
+      font-size: 1.5rem;
+    }
+
+    .feature-list {
+      list-style-type: none;
+      margin-top: 15px;
+    }
+
+    .feature-list li {
+      margin-bottom: 12px;
+      padding-left: 25px;
+      position: relative;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--secondary);
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    .diagram-container {
+      margin: 30px 0;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      min-height: 400px;
+      position: relative;
+    }
+
+    .diagram-title {
+      font-size: 1.3rem;
+      color: var(--secondary);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 0%;
+      transition: width 1.5s ease;
+      border-radius: 4px;
+    }
+
+    .slide-footer {
+      text-align: right;
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-top: 15px;
+      opacity: 0.7;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .btn:hover {
+      background-color: #0069d9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 119, 255, 0.4);
+    }
+
+    .animation-trigger {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .animation-trigger.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.95rem;
+      color: var(--gray);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      .slide {
+        padding: 30px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>LLM Agent System for Survey Data Cleaning</h1>
+      <p class="subtitle">An intelligent, autonomous system that analyzes, decides, and executes data cleaning operations with human-like reasoning and verification.</p>
+    </header>
+
+    <!-- Slide 1: Introduction -->
+    <div class="slide">
+      <h2 class="slide-title">The Problem: Manual Cleaning is Broken</h2>
+      <div class="content">
+        <p>Manual data cleaning is time-consuming, error-prone, and inconsistent. It takes hours of labor just to prepare datasets for analysis, leaving room for critical mistakes that can compromise research integrity.</p>
+      </div>
+      <div class="highlight">
+        "Cleaning surveys manually takes 20+ hours per dataset and still leaves risks of bias and inconsistency."
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Before vs After Cleaning</div>
+        <div id="beforeAfterDiagram" style="height: 300px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Problem Analysis</div>
+    </div>
+
+    <!-- Slide 2: The Solution -->
+    <div class="slide">
+      <h2 class="slide-title">Meet the LLM Agent System</h2>
+      <div class="content">
+        <p>An autonomous AI agent that thinks, reasons, and acts like a human data scientist—analyzing context, deciding on cleaning strategies, executing steps, and verifying results.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">System Architecture Overview</div>
+        <div id="architectureDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">System Architecture</div>
+    </div>
+
+    <!-- Slide 3: End-to-End Workflow -->
+    <div class="slide">
+      <h2 class="slide-title">End-to-End Processing Flow</h2>
+      <div class="content">
+        <p>From file upload to final report, every step is tracked, validated, and optimized by the AI. The system maintains full transparency and auditability throughout.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Workflow Execution Pipeline</div>
+        <div id="workflowDiagram" style="height: 400px; width: 100%;"></div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="workflow-progress"></div>
+      </div>
+      <div class="slide-footer">Workflow Progress</div>
+    </div>
+
+    <!-- Slide 4: Core Components -->
+    <div class="slide">
+      <h2 class="slide-title">Core System Components</h2>
+      <div class="content">
+        <p>The system integrates multiple specialized modules working in harmony:</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Component Integration Diagram</div>
+        <div id="componentsDiagram" style="height: 400px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">System Integration</div>
+    </div>
+
+    <!-- Slide 5: Metadata Generation -->
+    <div class="slide">
+      <h2 class="slide-title">Metadata Generator – The AI's "Eyes"</h2>
+      <div class="content">
+        <p>Before any cleaning begins, the system generates comprehensive metadata to understand the dataset's structure, quality, and potential issues.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Metadata Analysis Process</div>
+        <div id="metadataDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Metadata Analysis</div>
+    </div>
+
+    <!-- Slide 6: LLM Controller -->
+    <div class="slide">
+      <h2 class="slide-title">LLM Controller – The Brain</h2>
+      <div class="content">
+        <p>The central intelligence that analyzes metadata, crafts dynamic prompts, and makes decisions based on context, risk assessment, and quality goals.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Decision Making Process</div>
+        <div id="decisionDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Intelligent Decision Making</div>
+    </div>
+
+    <!-- Slide 7: Iterative Cleaning Process -->
+    <div class="slide">
+      <h2 class="slide-title">Iterative Cleaning Process</h2>
+      <div class="content">
+        <p>Each cleaning iteration follows a rigorous cycle of execution, verification, and learning:</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Iterative Processing Loop</div>
+        <div id="iterativeDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Process Loop</div>
+    </div>
+
+    <!-- Slide 8: Quality Verification -->
+    <div class="slide">
+      <h2 class="slide-title">Quality Verification & Safety</h2>
+      <div class="content">
+        <p>No change is applied without verification. The system ensures that every cleaning operation improves quality and maintains data integrity.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Quality Assurance Framework</div>
+        <div id="verificationDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Quality Assurance</div>
+    </div>
+
+    <!-- Slide 9: Report Generation -->
+    <div class="slide">
+      <h2 class="slide-title">Comprehensive Report Generation</h2>
+      <div class="content">
+        <p>The final output isn't just cleaned data—it's a complete record of the entire cleaning process with detailed metrics and insights.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Report Generation Pipeline</div>
+        <div id="reportDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Reporting System</div>
+    </div>
+
+    <!-- Slide 10: Export & Visualization -->
+    <div class="slide">
+      <h2 class="slide-title">Multi-Format Export & Interactive Visualizations</h2>
+      <div class="content">
+        <p>Users can export their cleaned data and reports in multiple formats, with interactive visualizations that reveal deep insights.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Export and Visualization System</div>
+        <div id="exportDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Export Capabilities</div>
+    </div>
+
+    <!-- Slide 11: Key Strengths -->
+    <div class="slide">
+      <h2 class="slide-title">Why This System Works</h2>
+      <div class="content">
+        <p>This system combines cutting-edge AI with rigorous validation to deliver reliable, transparent, and reproducible data cleaning.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">System Advantages</div>
+        <div id="advantagesDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">System Advantages</div>
+    </div>
+
+    <!-- Slide 12: Future Roadmap -->
+    <div class="slide">
+      <h2 class="slide-title">Future Enhancements</h2>
+      <div class="content">
+        <p>Our vision extends beyond current capabilities to create even more powerful tools for data scientists and researchers.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Future Development Roadmap</div>
+        <div id="roadmapDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="slide-footer">Future Development</div>
+    </div>
+
+    <!-- Slide 13: Closing -->
+    <div class="slide">
+      <h2 class="slide-title">The Future is Intelligent Cleaning</h2>
+      <div class="content">
+        <p>From messy input to pristine output—powered by AI, guided by expertise. The future of survey data cleaning is here.</p>
+      </div>
+      <div class="diagram-container">
+        <div class="diagram-title">Data Transformation Journey</div>
+        <div id="journeyDiagram" style="height: 350px; width: 100%;"></div>
+      </div>
+      <div class="highlight">
+        "Your data. Cleaned by intelligence."
+      </div>
+      <div class="slide-footer">Closing Statement</div>
+    </div>
+
+    <footer>
+      <p>© 2024 LLM Agent System for Survey Data Cleaning | An intelligent solution for modern data science</p>
+    </footer>
+  </div>
+
+  <script>
+    // Initialize dhtmlxDiagram
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create Before/After Comparison Diagram
+      const beforeAfterDiagram = new dhx.Diagram("beforeAfterDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "before", text: "Messy Dataset\n\n• Incomplete records\n• Duplicates\n• Outliers\n• Inconsistent types", x: 100, y: 100, width: 200, height: 120, shape: "rectangle", fill: "#ffcdd2", stroke: "#d32f2f" },
+          { id: "after", text: "Cleaned Dataset\n\n• Complete records\n• No duplicates\n• Outliers flagged\n• Consistent types", x: 600, y: 100, width: 200, height: 120, shape: "rectangle", fill: "#c8e6c9", stroke: "#388e3c" }
+        ],
+        edges: [
+          { from: "before", to: "after", text: "AI-Powered Cleaning", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create System Architecture Diagram
+      const architectureDiagram = new dhx.Diagram("architectureDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "frontend", text: "Frontend Layer\n(Redux/Streamlit)", x: 100, y: 100, width: 180, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "api", text: "Backend API\n(FastAPI)", x: 350, y: 100, width: 140, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "database", text: "Database\n(PostgreSQL)", x: 550, y: 100, width: 140, height: 80, shape: "rectangle", fill: "#fff3e0", stroke: "#ff9800" },
+          { id: "llm", text: "LLM Controller\n(Agent)", x: 350, y: 250, width: 140, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "ml", text: "ML Processors\n(KNN, RF, etc.)", x: 350, y: 400, width: 140, height: 80, shape: "rectangle", fill: "#ffebee", stroke: "#f44336" },
+          { id: "report", text: "Report Generator\n(Dynamic Templates)", x: 350, y: 550, width: 140, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "frontend", to: "api", text: "Upload & Request", stroke: "#007BFF", arrow: "arrow" },
+          { from: "api", to: "database", text: "Store Session", stroke: "#007BFF", arrow: "arrow" },
+          { from: "api", to: "llm", text: "Send Context", stroke: "#007BFF", arrow: "arrow" },
+          { from: "llm", to: "ml", text: "Execute Steps", stroke: "#007BFF", arrow: "arrow" },
+          { from: "ml", to: "report", text: "Generate Output", stroke: "#007BFF", arrow: "arrow" },
+          { from: "report", to: "frontend", text: "Return Results", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Workflow Execution Pipeline
+      const workflowDiagram = new dhx.Diagram("workflowDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "upload", text: "File Upload\n(Secure)", x: 100, y: 100, width: 140, height: 60, shape: "rectangle", fill: "#ffebee", stroke: "#f44336" },
+          { id: "validation", text: "Data Validation\n(Size, Structure)", x: 100, y: 180, width: 140, height: 60, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "preview", text: "Initial Preview\n(Sample Rows)", x: 100, y: 260, width: 140, height: 60, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "metadata", text: "Metadata Generation\n(Analysis)", x: 100, y: 340, width: 140, height: 60, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "llm_analysis", text: "LLM Analysis\n(Strategy)", x: 300, y: 100, width: 140, height: 60, shape: "rectangle", fill: "#fff3e0", stroke: "#ff9800" },
+          { id: "approval", text: "User Review & Approval", x: 300, y: 180, width: 140, height: 60, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "execution", text: "Step Execution\n(Processing)", x: 300, y: 260, width: 140, height: 60, shape: "rectangle", fill: "#fde0dc", stroke: "#d32f2f" },
+          { id: "verification", text: "Quality Verification\n(Validation)", x: 300, y: 340, width: 140, height: 60, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "post_metadata", text: "Post-Step Metadata\n(Update)", x: 500, y: 100, width: 140, height: 60, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "more_steps", text: "More Steps?\n(Y/N)", x: 500, y: 180, width: 140, height: 60, shape: "diamond", fill: "#ffebee", stroke: "#f44336" },
+          { id: "final_assessment", text: "Final Quality Assessment", x: 500, y: 260, width: 140, height: 60, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "report", text: "Report Generation\n(Documentation)", x: 500, y: 340, width: 140, height: 60, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" },
+          { id: "download", text: "Export & Download\n(Multi-format)", x: 700, y: 260, width: 140, height: 60, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" }
+        ],
+        edges: [
+          { from: "upload", to: "validation", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "validation", to: "preview", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "preview", to: "metadata", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "metadata", to: "llm_analysis", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "llm_analysis", to: "approval", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "approval", to: "execution", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "execution", to: "verification", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "verification", to: "post_metadata", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "post_metadata", to: "more_steps", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "more_steps", to: "llm_analysis", text: "Yes", stroke: "#007BFF", arrow: "arrow" },
+          { from: "more_steps", to: "final_assessment", text: "No", stroke: "#007BFF", arrow: "arrow" },
+          { from: "final_assessment", to: "report", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "report", to: "download", text: "", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Component Integration Diagram
+      const componentsDiagram = new dhx.Diagram("componentsDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "frontend", text: "Frontend Layer\n(React/Streamlit)", x: 100, y: 100, width: 180, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "backend", text: "Backend API\n(FastAPI)", x: 350, y: 100, width: 140, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "database", text: "Database\n(PostgreSQL)", x: 550, y: 100, width: 140, height: 80, shape: "rectangle", fill: "#fff3e0", stroke: "#ff9800" },
+          { id: "llm", text: "LLM Controller\n(Agent)", x: 350, y: 250, width: 140, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "ml", text: "ML Processors\n(KNN, RF, etc.)", x: 350, y: 400, width: 140, height: 80, shape: "rectangle", fill: "#ffebee", stroke: "#f44336" },
+          { id: "report", text: "Report Generator\n(Dynamic Templates)", x: 350, y: 550, width: 140, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "frontend", to: "backend", text: "Upload & Request", stroke: "#007BFF", arrow: "arrow" },
+          { from: "backend", to: "database", text: "Store Session", stroke: "#007BFF", arrow: "arrow" },
+          { from: "backend", to: "llm", text: "Send Context", stroke: "#007BFF", arrow: "arrow" },
+          { from: "llm", to: "ml", text: "Execute Steps", stroke: "#007BFF", arrow: "arrow" },
+          { from: "ml", to: "report", text: "Generate Output", stroke: "#007BFF", arrow: "arrow" },
+          { from: "report", to: "frontend", text: "Return Results", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Metadata Analysis Process
+      const metadataDiagram = new dhx.Diagram("metadataDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "raw", text: "Raw Dataset", x: 100, y: 100, width: 140, height: 60, shape: "rectangle", fill: "#ffebee", stroke: "#f44336" },
+          { id: "basic", text: "Basic Statistics\n(Rows, Columns, Memory)", x: 100, y: 180, width: 140, height: 60, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "missing", text: "Missing Values\n(Patterns & Recommendations)", x: 100, y: 260, width: 140, height: 60, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "duplicates", text: "Duplicates\n(Exact, Near, Fuzzy)", x: 100, y: 340, width: 140, height: 60, shape: "rectangle", fill: "#fff3e0", stroke: "#ff9800" },
+          { id: "outliers", text: "Outliers\n(IQR, Z-score, Isolation Forest)", x: 100, y: 420, width: 140, height: 60, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "correlation", text: "Correlation Analysis\n(Numeric Variables)", x: 100, y: 500, width: 140, height: 60, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" },
+          { id: "survey", text: "Survey Intelligence\n(Weights, Scales, Demographics)", x: 350, y: 100, width: 160, height: 60, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "quality", text: "Quality Score\n(0-100 Scale)", x: 350, y: 180, width: 160, height: 60, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "recommendations", text: "Dynamic Recommendations\n(Method Selection)", x: 350, y: 260, width: 160, height: 60, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" }
+        ],
+        edges: [
+          { from: "raw", to: "basic", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "basic", to: "missing", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "missing", to: "duplicates", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "duplicates", to: "outliers", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "outliers", to: "correlation", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "correlation", to: "quality", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "raw", to: "survey", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "survey", to: "recommendations", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "quality", to: "recommendations", text: "", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Decision Making Process
+      const decisionDiagram = new dhx.Diagram("decisionDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "context", text: "Context Analysis\n(Size, Complexity, Quality)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "prompt", text: "Dynamic Prompt Engineering\n(Context-Aware Prompts)", x: 100, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "decide", text: "Decision Engine\n(LLM Consultation)", x: 100, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "validate", text: "Verification & Fallback\n(Risk Assessment)", x: 100, y: 400, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "output", text: "Structured Output\n(Actionable Recommendations)", x: 350, y: 250, width: 200, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "context", to: "prompt", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "prompt", to: "decide", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "decide", to: "validate", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "validate", to: "output", text: "", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Iterative Processing Loop
+      const iterativeDiagram = new dhx.Diagram("iterativeDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "retrieve", text: "Retrieve Current State\n(Session Status)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "execute", text: "Execute Cleaning Step\n(Application)", x: 100, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "post_meta", text: "Generate Post-Metadata\n(New Metrics)", x: 100, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "verify", text: "Verify Results\n(Impact Assessment)", x: 100, y: 400, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "next", text: "Next Recommendation\n(Optimal Action)", x: 350, y: 250, width: 200, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "retrieve", to: "execute", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "execute", to: "post_meta", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "post_meta", to: "verify", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "verify", to: "next", text: "", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Quality Assurance Framework
+      const verificationDiagram = new dhx.Diagram("verificationDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "before", text: "Before Cleaning\n(Pre-Cleaning Metrics)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "after", text: "After Cleaning\n(Post-Cleaning Metrics)", x: 100, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "compare", text: "Compare Changes\n(Change Impact Analysis)", x: 100, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "validate", text: "Validate Improvement\n(Quality Assessment)", x: 100, y: 400, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "approve", text: "Approve Change\n(Permanent Application)", x: 350, y: 250, width: 200, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "before", to: "after", text: "Apply Cleaning Operation", stroke: "#007BFF", arrow: "arrow" },
+          { from: "after", to: "compare", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "compare", to: "validate", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "validate", to: "approve", text: "", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Report Generation Pipeline
+      const reportDiagram = new dhx.Diagram("reportDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "executive", text: "Executive Summary\n(Key Metrics)", x: 100, y: 100, width: 180, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "technical", text: "Technical Details\n(Processing Log)", x: 100, y: 200, width: 180, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "metrics", text: "Quality Metrics\n(Before/After)", x: 100, y: 300, width: 180, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "insights", text: "Survey Insights\n(Specialized Analysis)", x: 100, y: 400, width: 180, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "recommendations", text: "Recommendations\n(Future Analysis)", x: 350, y: 200, width: 180, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" },
+          { id: "appendix", text: "Technical Appendix\n(Parameters)", x: 350, y: 300, width: 180, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" }
+        ],
+        edges: [
+          { from: "executive", to: "technical", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "technical", to: "metrics", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "metrics", to: "insights", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "insights", to: "recommendations", text: "", stroke: "#007BFF", arrow: "arrow" },
+          { from: "insights", to: "appendix", text: "", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Export and Visualization System
+      const exportDiagram = new dhx.Diagram("exportDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "data", text: "Cleaned Data\n(CSV, Excel, SPSS, Stata, R)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "reports", text: "Reports\n(PDF, HTML, Word, JSON)", x: 100, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "visualizations", text: "Visualizations\n(PNG, SVG, PDF)", x: 100, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "log", text: "Processing Log\n(CSV, JSON)", x: 100, y: 400, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "metadata", text: "Metadata\n(JSON, XML, CSV)", x: 350, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" },
+          { id: "codebook", text: "Codebook\n(HTML, PDF)", x: 350, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" }
+        ],
+        edges: [
+          { from: "data", to: "reports", text: "Export Options", stroke: "#007BFF", arrow: "arrow" },
+          { from: "data", to: "visualizations", text: "Export Options", stroke: "#007BFF", arrow: "arrow" },
+          { from: "data", to: "log", text: "Export Options", stroke: "#007BFF", arrow: "arrow" },
+          { from: "reports", to: "metadata", text: "Include Metadata", stroke: "#007BFF", arrow: "arrow" },
+          { from: "visualizations", to: "codebook", text: "Include Codebook", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create System Advantages
+      const advantagesDiagram = new dhx.Diagram("advantagesDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "autonomy", text: "Autonomy\n(Independent Decision Making)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "context", text: "Context-Awareness\n(Adapts to Dataset)", x: 100, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "quality", text: "Quality Assurance\n(Verification at Each Step)", x: 100, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "reliability", text: "Reliability\n(Consistent Results)", x: 350, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "learning", text: "Learning Capability\n(Improves Over Time)", x: 350, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "autonomy", to: "context", text: "Enables", stroke: "#007BFF", arrow: "arrow" },
+          { from: "context", to: "quality", text: "Ensures", stroke: "#007BFF", arrow: "arrow" },
+          { from: "quality", to: "reliability", text: "Guarantees", stroke: "#007BFF", arrow: "arrow" },
+          { from: "reliability", to: "learning", text: "Supports", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Future Development Roadmap
+      const roadmapDiagram = new dhx.Diagram("roadmapDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "deep_learning", text: "Deep Learning\n(Neural Network Imputation)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e3f2fd", stroke: "#1976d2" },
+          { id: "multimodal", text: "Multi-Modal LLMs\n(Text + Numerical)", x: 100, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#e8f5e8", stroke: "#4caf50" },
+          { id: "longitudinal", text: "Longitudinal Data\n(Panel Study Processing)", x: 100, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#f3e5f5", stroke: "#9c27b0" },
+          { id: "mobile", text: "Mobile App\n(Field Data Collection)", x: 350, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" },
+          { id: "collaboration", text: "Real-time Collaboration\n(Team-Based Cleaning)", x: 350, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#fce4ec", stroke: "#d32f2f" }
+        ],
+        edges: [
+          { from: "deep_learning", to: "multimodal", text: "Builds On", stroke: "#007BFF", arrow: "arrow" },
+          { from: "multimodal", to: "longitudinal", text: "Extends To", stroke: "#007BFF", arrow: "arrow" },
+          { from: "longitudinal", to: "mobile", text: "Applies To", stroke: "#007BFF", arrow: "arrow" },
+          { from: "mobile", to: "collaboration", text: "Enables", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Create Data Transformation Journey
+      const journeyDiagram = new dhx.Diagram("journeyDiagram", {
+        type: "flow",
+        nodes: [
+          { id: "messy", text: "Messy Data\n(Raw, Incomplete, Inconsistent)", x: 100, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#ffcdd2", stroke: "#d32f2f" },
+          { id: "agent", text: "AI Agent\n(Intelligent Decision Making)", x: 350, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#e1f5fe", stroke: "#0288d1" },
+          { id: "cleaned", text: "Cleaned Data\n(Complete, Consistent, Reliable)", x: 600, y: 100, width: 200, height: 80, shape: "rectangle", fill: "#c8e6c9", stroke: "#388e3c" },
+          { id: "insights", text: "Insights\n(Actionable Findings)", x: 600, y: 200, width: 200, height: 80, shape: "rectangle", fill: "#fff3e0", stroke: "#ff9800" },
+          { id: "impact", text: "Research Impact\n(Valid, Publishable Results)", x: 600, y: 300, width: 200, height: 80, shape: "rectangle", fill: "#e0f2f1", stroke: "#00bcd4" }
+        ],
+        edges: [
+          { from: "messy", to: "agent", text: "Input", stroke: "#007BFF", arrow: "arrow" },
+          { from: "agent", to: "cleaned", text: "Output", stroke: "#007BFF", arrow: "arrow" },
+          { from: "cleaned", to: "insights", text: "Analysis", stroke: "#007BFF", arrow: "arrow" },
+          { from: "insights", to: "impact", text: "Application", stroke: "#007BFF", arrow: "arrow" }
+        ]
+      });
+
+      // Animation trigger on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.slide').forEach(slide => {
+        observer.observe(slide);
+      });
+
+      // Progress bar animation
+      const progressFill = document.getElementById('workflow-progress');
+      setTimeout(() => {
+        progressFill.style.width = '100%';
+      }, 1000);
+
+      // Add animation to code blocks
+      const codeBlocks = document.querySelectorAll('.code-block');
+      codeBlocks.forEach(block => {
+        block.style.opacity = '0';
+        block.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          block.style.transition = 'all 0.6s ease';
+          block.style.opacity = '1';
+          block.style.transform = 'translateY(0)';
+        }, 500);
+      });
+    });
+
+    // Smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>

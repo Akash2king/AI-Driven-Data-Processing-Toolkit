@@ -1,0 +1,111 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-08-19T16:34:41.960390",
+    "tool_version": "1.0.0",
+    "total_steps": 1
+  },
+  "summary": {
+    "dataset_changes": {
+      "rows_before": 9248,
+      "rows_after": 9248,
+      "rows_change": 0,
+      "columns_before": 192,
+      "columns_after": 192,
+      "columns_change": 0
+    },
+    "quality_improvements": {
+      "missing_values_filled": 0,
+      "duplicates_removed": 0,
+      "quality_score_before": 0,
+      "quality_score_after": 0,
+      "quality_improvement": 0
+    },
+    "processing_summary": {
+      "total_steps_executed": 1,
+      "successful_steps": 1,
+      "failed_steps": 0,
+      "llm_verified_steps": 0
+    },
+    "data_preservation": {
+      "data_retention_percentage": 100.0,
+      "is_acceptable": true
+    }
+  },
+  "original_dataset": {
+    "basic_info": {
+      "total_rows": 9248,
+      "total_columns": 192
+    },
+    "data_quality_score": {},
+    "missing_values_summary": {
+      "total_missing": 0,
+      "columns_with_missing": 0,
+      "worst_columns": {}
+    },
+    "duplicates_summary": {},
+    "potential_weight_variables": []
+  },
+  "final_dataset": {
+    "basic_info": {
+      "total_rows": 9248,
+      "total_columns": 192
+    },
+    "data_quality_score": {},
+    "missing_values_summary": {
+      "total_missing": 0,
+      "columns_with_missing": 0,
+      "worst_columns": {}
+    },
+    "duplicates_summary": {},
+    "potential_weight_variables": []
+  },
+  "processing_steps": [
+    {
+      "step_number": 1,
+      "task": "impute_missing",
+      "method": "knn",
+      "columns_affected": null,
+      "execution_status": "completed",
+      "verification_status": "needs_review",
+      "execution_time_seconds": 0,
+      "llm_reasoning": "High missing data detected, KNN imputation recommended",
+      "verification_reason": "",
+      "user_approved": true,
+      "impact": {
+        "rows_before": 9248,
+        "rows_after": 9248,
+        "missing_values_before": 0,
+        "missing_values_after": 0,
+        "duplicates_before": 0,
+        "duplicates_after": 0
+      }
+    }
+  ],
+  "quality_assessment": {
+    "overall_score": 0,
+    "grade": "F",
+    "strengths": [
+      "Low missing values (<5%)",
+      "No duplicate records"
+    ],
+    "weaknesses": [
+      "Overall data quality below recommended threshold"
+    ],
+    "ready_for_analysis": false
+  },
+  "recommendations": [
+    "Consider additional cleaning steps to improve data quality"
+  ],
+  "data_lineage": {
+    "processing_pipeline": [
+      {
+        "step": "impute_missing",
+        "method": "knn",
+        "timestamp": "2025-08-19T11:04:29",
+        "verified": false
+      }
+    ],
+    "data_transformations": {},
+    "quality_checkpoints": []
+  }
+}

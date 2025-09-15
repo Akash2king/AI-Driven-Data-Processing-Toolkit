@@ -1,0 +1,11 @@
+id,name,age,gender,income,satisfaction,response_date,city,education
+1,John Smith,35,Male,75000,4.2,2024-01-15,New York,Bachelor
+2,Jane Doe,28,Female,65000,3.8,2024-01-16,Los Angeles,Master
+3,Bob Johnson,42,Male,,4.5,2024-01-17,Chicago,Bachelor
+4,Alice Brown,31,Female,80000,,2024-01-18,Houston,PhD
+5,Charlie Wilson,29,Male,55000,3.2,2024-01-19,Phoenix,Bachelor
+6,Diana Davis,38,Female,90000,4.7,2024-01-20,Philadelphia,Master
+7,John Smith,35,Male,75000,4.2,2024-01-15,New York,Bachelor
+8,Eve Martinez,26,Female,48000,3.5,,Miami,Bachelor
+9,Frank Taylor,45,,85000,4.1,2024-01-22,Boston,Master
+10,Grace Lee,33,Female,72000,4.0,2024-01-23,Seattle,Bachelor

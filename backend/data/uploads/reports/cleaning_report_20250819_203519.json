@@ -1,0 +1,242 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-08-19T20:35:19.190614",
+    "tool_version": "1.0.0",
+    "total_steps": 1
+  },
+  "summary": {
+    "dataset_changes": {
+      "rows_before": 17546,
+      "rows_after": 17546,
+      "rows_change": 0,
+      "columns_before": 39,
+      "columns_after": 39,
+      "columns_change": 0
+    },
+    "quality_improvements": {
+      "missing_values_filled": 0,
+      "duplicates_removed": 0,
+      "quality_score_before": 100.0,
+      "quality_score_after": 100.0,
+      "quality_improvement": 0.0
+    },
+    "processing_summary": {
+      "total_steps_executed": 1,
+      "successful_steps": 1,
+      "failed_steps": 0,
+      "llm_verified_steps": 0
+    },
+    "data_preservation": {
+      "data_retention_percentage": 100.0,
+      "is_acceptable": true
+    }
+  },
+  "original_dataset": {
+    "basic_info": {
+      "total_rows": 17546,
+      "total_columns": 39,
+      "memory_usage_mb": 20.94400691986084,
+      "column_names": [
+        "STABR",
+        "FSCSKEY",
+        "FSCS_SEQ",
+        "C_FSCS",
+        "LIBID",
+        "LIBNAME",
+        "ADDRESS",
+        "CITY",
+        "ZIP",
+        "ZIP4",
+        "CNTY",
+        "PHONE",
+        "C_OUT_TY",
+        "SQ_FEET",
+        "F_SQ_FT",
+        "L_NUM_BM",
+        "HOURS",
+        "F_HOURS",
+        "WKS_OPEN",
+        "F_WKSOPN",
+        "YR_SUB",
+        "OBEREG",
+        "STATSTRU",
+        "STATNAME",
+        "STATADDR",
+        "LONGITUD",
+        "LATITUDE",
+        "CNTYPOP",
+        "LOCALE",
+        "CENTRACT",
+        "CENBLOCK",
+        "CDCODE",
+        "CBSA",
+        "MICROF",
+        "GEOSTATUS",
+        "GEOSCORE",
+        "GEOMTYPE",
+        "C19WKSCL",
+        "C19WKSLO"
+      ],
+      "size_category": "large",
+      "complexity_score": 46.66676409067838,
+      "memory_category": "high",
+      "processing_recommendation": "enhanced"
+    },
+    "data_quality_score": {
+      "completeness": 99.99970772796487,
+      "uniqueness": 100.0,
+      "consistency": 100.0,
+      "overall_score": 99.99988309118595,
+      "dynamic_assessment": true
+    },
+    "missing_values_summary": {
+      "total_missing": 2,
+      "columns_with_missing": 1,
+      "worst_columns": {
+        "LIBID": 0.011398609369656903
+      }
+    },
+    "duplicates_summary": {
+      "total_duplicates": 0,
+      "duplicate_percentage": 0.0,
+      "subset_duplicates": {
+        "categorical_columns": 58
+      },
+      "unique_rows": 17546,
+      "duplicate_distribution": {
+        "total_groups": 0
+      },
+      "near_duplicates": 0,
+      "duplicate_causes": []
+    },
+    "potential_weight_variables": []
+  },
+  "final_dataset": {
+    "basic_info": {
+      "total_rows": 17546,
+      "total_columns": 39,
+      "memory_usage_mb": 20.94400691986084,
+      "column_names": [
+        "STABR",
+        "FSCSKEY",
+        "FSCS_SEQ",
+        "C_FSCS",
+        "LIBID",
+        "LIBNAME",
+        "ADDRESS",
+        "CITY",
+        "ZIP",
+        "ZIP4",
+        "CNTY",
+        "PHONE",
+        "C_OUT_TY",
+        "SQ_FEET",
+        "F_SQ_FT",
+        "L_NUM_BM",
+        "HOURS",
+        "F_HOURS",
+        "WKS_OPEN",
+        "F_WKSOPN",
+        "YR_SUB",
+        "OBEREG",
+        "STATSTRU",
+        "STATNAME",
+        "STATADDR",
+        "LONGITUD",
+        "LATITUDE",
+        "CNTYPOP",
+        "LOCALE",
+        "CENTRACT",
+        "CENBLOCK",
+        "CDCODE",
+        "CBSA",
+        "MICROF",
+        "GEOSTATUS",
+        "GEOSCORE",
+        "GEOMTYPE",
+        "C19WKSCL",
+        "C19WKSLO"
+      ],
+      "size_category": "large",
+      "complexity_score": 46.66676409067838,
+      "memory_category": "high",
+      "processing_recommendation": "enhanced"
+    },
+    "data_quality_score": {
+      "completeness": 99.99970772796487,
+      "uniqueness": 100.0,
+      "consistency": 100.0,
+      "overall_score": 99.99988309118595,
+      "dynamic_assessment": true
+    },
+    "missing_values_summary": {
+      "total_missing": 2,
+      "columns_with_missing": 1,
+      "worst_columns": {
+        "LIBID": 0.011398609369656903
+      }
+    },
+    "duplicates_summary": {
+      "total_duplicates": 0,
+      "duplicate_percentage": 0.0,
+      "subset_duplicates": {
+        "categorical_columns": 58
+      },
+      "unique_rows": 17546,
+      "duplicate_distribution": {
+        "total_groups": 0
+      },
+      "near_duplicates": 0,
+      "duplicate_causes": []
+    },
+    "potential_weight_variables": []
+  },
+  "processing_steps": [
+    {
+      "step_number": 1,
+      "task": "impute_missing",
+      "method": "knn",
+      "columns_affected": null,
+      "execution_status": "completed",
+      "verification_status": "needs_review",
+      "execution_time_seconds": 0,
+      "llm_reasoning": "High missing data detected, KNN imputation recommended",
+      "verification_reason": "",
+      "user_approved": true,
+      "impact": {
+        "rows_before": 17546,
+        "rows_after": 17546,
+        "missing_values_before": 2,
+        "missing_values_after": 2,
+        "duplicates_before": 0,
+        "duplicates_after": 0
+      }
+    }
+  ],
+  "quality_assessment": {
+    "overall_score": 100.0,
+    "grade": "A",
+    "strengths": [
+      "Low missing values (<5%)",
+      "No duplicate records"
+    ],
+    "weaknesses": [],
+    "ready_for_analysis": true
+  },
+  "recommendations": [
+    "Dataset is ready for statistical analysis",
+    "Document any exclusions or imputations in your analysis methodology"
+  ],
+  "data_lineage": {
+    "processing_pipeline": [
+      {
+        "step": "impute_missing",
+        "method": "knn",
+        "timestamp": "2025-08-19T15:04:49",
+        "verified": false
+      }
+    ],
+    "data_transformations": {},
+    "quality_checkpoints": []
+  }
+}
