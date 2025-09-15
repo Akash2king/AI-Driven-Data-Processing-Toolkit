@@ -1,7 +1,7 @@
 
 # 📊 LLM-Guided Survey Data Cleaning and Preparation Tool
 
-A **comprehensive web-based interactive system** that uses **machine learning** to generate metadata about survey datasets and employs a **Large Language Model (LLM)** to decide, verify, and control the execution of cleaning and processing steps — all with **step-by-step user acknowledgment** and **persistent memory** for quality assurance and reproducibility.
+A **web-based interactive system** that uses **machine learning** to analyze survey datasets and employs a **Large Language Model (LLM)** to guide, verify, and control data cleaning — with **step-by-step user approval** and **persistent memory** for reproducibility and auditability.
 
 ---
 
@@ -9,60 +9,50 @@ A **comprehensive web-based interactive system** that uses **machine learning** 
 
 ### 🧠 Core Capabilities
 
-* **Automated Data Analysis** – AI-powered detection of missing values, duplicates, outliers, and data quality issues.
-* **LLM-Guided Decision Making** – GPT-4 or Llama-3 powered recommendations for cleaning steps.
-* **Interactive Step Approval** – Users can approve, reject, or modify each cleaning action.
-* **Comprehensive Reporting** – Before/after analysis with exportable cleaning reports.
-* **Survey Weight Detection** – Automatic identification of survey weight variables.
-* **Quality Scoring** – Real-time data quality assessment and improvement tracking.
-
-### ⚙️ Technical Features
-
-* **Scalable Architecture** – Stateless **FastAPI** backend with modular design.
-* **Multiple File Formats** – Supports CSV, Excel (.xlsx, .xls), and SPSS (.sav).
-* **Persistent Memory** – PostgreSQL storage for step history and LLM memory.
-* **Real-time Verification** – LLM validates the effectiveness of each cleaning step.
-* **Flexible Export Options** – Clean datasets exportable in multiple formats.
+* **Automated Data Analysis** – Detect missing values, duplicates, outliers, and type inconsistencies.
+* **LLM-Guided Cleaning** – GPT-4 or Llama-3 powered recommendations for best cleaning strategies.
+* **Interactive Step Control** – Users approve each step before execution.
+* **Quality Tracking** – Real-time data quality scoring and improvement history.
+* **Survey-Aware Features** – Detect survey weights, compute weighted stats, design effect analysis.
+* **Comprehensive Reporting** – Full before/after comparison, downloadable reports.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Architecture
 
-### 🖥️ Backend (FastAPI + Python)
+### 🖥️ Backend (FastAPI)
 
 ```
 backend/
 ├── app/
-│   ├── modules/          # Core processing modules
+│   ├── modules/
 │   │   ├── data_upload.py
 │   │   ├── metadata_generator.py
 │   │   ├── llm_controller.py
 │   │   ├── ml_processors.py
 │   │   └── report_generator.py
-│   ├── api/              # API endpoints
-│   ├── core/             # Config & DB setup
-│   ├── models/           # Database models
-│   └── utils/            # Utility functions
-├── main.py               # FastAPI entrypoint
-└── requirements.txt      # Dependencies
+│   ├── api/
+│   ├── core/
+│   ├── models/
+│   └── utils/
+├── main.py
+└── requirements.txt
 ```
 
-### 🌐 Frontend (React + TypeScript)
+### 🎨 Frontend (Streamlit)
 
 ```
 frontend/
-├── src/
-│   ├── components/       # UI Components
-│   │   ├── FileUpload.tsx
-│   │   ├── DataPreview.tsx
-│   │   ├── StepApprovalModal.tsx
-│   │   ├── StepExecutionLog.tsx
-│   │   └── FinalReportView.tsx
-│   ├── pages/            # App Pages
-│   ├── types/            # TS Types
-│   ├── utils/            # API Helpers
-│   └── App.tsx           # Main App Component
-└── package.json          # Node.js dependencies
+├── app.py              # Main Streamlit application
+├── components/         # Custom UI components
+│   ├── file_upload.py
+│   ├── data_preview.py
+│   ├── step_approval.py
+│   ├── execution_log.py
+│   └── final_report.py
+├── utils/
+│   └── api_client.py   # Functions for calling FastAPI endpoints
+└── requirements.txt
 ```
 
 ---
@@ -72,7 +62,6 @@ frontend/
 ### ✅ Prerequisites
 
 * Python **3.8+**
-* Node.js **16+**
 * PostgreSQL **12+**
 * Redis **6+** *(optional, for caching)*
 
@@ -90,46 +79,46 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env  # Edit configuration
+cp .env.example .env
+# Edit .env with DB and LLM settings
 ```
 
-1. **Configure Database**
+1. **Configure database**
 
    * Create a PostgreSQL database.
-   * Update `DATABASE_URL` in `.env`.
-   * Run migrations (auto-created on startup).
+   * Set `DATABASE_URL` in `.env`.
+   * Run migrations (auto-applied on startup).
 
-2. **Start Backend**
+2. **Start backend**
 
 ```bash
 python main.py
 ```
 
-API will be available at **[http://localhost:8000](http://localhost:8000)**
+API available at **[http://localhost:8000](http://localhost:8000)**
 
 ---
 
-### 🎨 Frontend Setup
+### 🎨 Frontend Setup (Streamlit)
 
 ```bash
 cd frontend
-npm install
-npm start
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
-Frontend will be available at **[http://localhost:3000](http://localhost:3000)**
+Frontend available at **[http://localhost:8501](http://localhost:8501)**
 
 ---
 
 ## 🔧 Configuration
 
-### `.env` Example
+### `.env` Example (Backend)
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/survey_cleaner
 REDIS_URL=redis://localhost:6379
 
-# LLM
 OPENAI_API_KEY=your-openai-api-key
 OPENAI_MODEL=gpt-4
 LLM_PROVIDER=openai  # or 'local'
@@ -139,68 +128,63 @@ MAX_FILE_SIZE=104857600  # 100MB
 SECRET_KEY=your-super-secret-key
 ```
 
-### LLM Options
-
-* **OpenAI GPT-4 (Recommended):** `LLM_PROVIDER=openai`
-* **Local Llama-3:** `LLM_PROVIDER=local` + configure `LOCAL_LLM_URL`
-
 ---
 
 ## 📊 Data Processing Pipeline
 
 1. **Upload & Analyze**
 
-   * File upload & validation
-   * Metadata & quality score generation
+   * Streamlit upload → FastAPI validation
+   * Automatic metadata & quality assessment
 
 2. **LLM Decision Making**
 
-   * Recommendations for cleaning steps
-   * Method selection based on dataset
+   * GPT-4/Llama-3 suggests prioritized cleaning steps
+   * Displays explanation for user approval
 
 3. **Interactive Cleaning**
 
-   * Step-by-step user approval
-   * Execution logs & live verification
+   * Approve/reject steps in Streamlit
+   * View logs and intermediate results
 
 4. **Quality Assurance**
 
-   * Before/after comparison
-   * Improvement tracking & lineage logs
+   * Compare before/after data
+   * Track quality improvement score
 
-5. **Reporting**
+5. **Generate Report**
 
-   * Generate and export final cleaning report
+   * Export clean dataset + full audit trail
 
 ---
 
 ## 🎯 Supported Cleaning Operations
 
-* **Duplicates:** Exact, near-match, fuzzy deduplication
-* **Missing Values:** KNN, RF, statistical imputation
-* **Outliers:** IQR, Z-score, Isolation Forest, LOF
-* **Data Types:** Auto-detection & type conversion
-* **Survey-Specific:** Weight detection, weighted stats, design effect analysis
+* **Duplicate Records** – Exact, near-match, fuzzy deduplication
+* **Missing Values** – KNN, Random Forest, mean/median imputation
+* **Outliers** – IQR, Z-score, Isolation Forest, LOF
+* **Data Type Fixes** – Automatic type detection & conversion
+* **Survey Weights** – Detect and compute weighted statistics
 
 ---
 
-## 🚀 Example API Workflow
+## 🚀 Example Workflow (API)
 
 ```python
 # Upload Dataset
 POST /api/v1/cleaning/upload
 
-# Create Session
+# Create Processing Session
 POST /api/v1/cleaning/dataset/{dataset_id}/session
 
-# Get LLM Recommendation
+# Get LLM Recommendations
 POST /api/v1/cleaning/session/{session_id}/next-step
 
-# Execute Cleaning Step
+# Execute Approved Cleaning Step
 POST /api/v1/cleaning/session/{session_id}/execute-step
 ```
 
-Full documentation: **[http://localhost:8000/docs](http://localhost:8000/docs)**
+Full API documentation: **[http://localhost:8000/docs](http://localhost:8000/docs)**
 
 ---
 
@@ -213,41 +197,45 @@ pytest
 
 # Frontend
 cd frontend
-npm test
+pytest  # if using streamlit testing framework or unit tests
+```
+
+---
+
+## 🚀 Deployment
+
+### Docker Deployment (Recommended)
+
+```bash
+docker-compose up -d
+```
+
+### Manual Deployment
+
+* **Backend:**
+
+```bash
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker
+```
+
+* **Frontend:**
+
+```bash
+streamlit run app.py --server.port 8501
 ```
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repository
+1. Fork this repository
 2. Create a feature branch
-3. Commit & push changes
-4. Submit a PR
+3. Add/modify code
+4. Write tests for new functionality
+5. Submit a Pull Request
 
 ---
 
 ## 📝 License
 
-Licensed under **MIT License** – see [LICENSE](LICENSE).
-
----
-
-## 🙏 Acknowledgments
-
-* **OpenAI** – GPT-4 API
-* **Meta** – Llama-3 architecture
-* **FastAPI & React** communities
-* Survey research domain experts
-
----
-
-## 📞 Support
-
-* Open a GitHub issue
-* Check `/docs`
-* Review API at `/api/docs`
-
----
-
-**Built with ❤️ for the survey research community**
+Licensed under the **MIT License** – see [LICENSE](LICENSE).
